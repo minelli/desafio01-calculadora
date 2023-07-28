@@ -4,6 +4,7 @@ import { Container, Content, Row } from "./styles";
 import { useState } from "react";
 
 const App = () => {
+  const [history, setHistory] = useState("");
   const [currentNumber, setCurrentNumber] = useState("0");
   const [firstNumber, setFirstNumber] = useState("0");
   const [operation, setOperation] = useState("");
@@ -15,12 +16,10 @@ const App = () => {
     setCurrentNumber("0");
     setFirstNumber("0");
     setOperation("");
+    setHistory("");
   };
 
   const handleResult = () => {
-    console.log("First:" + firstNumber);
-    console.log("Operation:" + operation);
-    console.log("Current:" + currentNumber);
     if (operation !== "") setCurrentNumber(String("ERROR"));
     let result = 0;
     switch (operation) {
@@ -40,6 +39,7 @@ const App = () => {
         result = "0";
         break;
     }
+    setHistory((history) => `${history}${currentNumber}=${result}`);
     setCurrentNumber(String(result));
     setFirstNumber(String(result));
   };
@@ -47,14 +47,17 @@ const App = () => {
   const handleOperation = (operation) => {
     if (firstNumber === "0") {
       setFirstNumber(currentNumber);
+      setHistory((history) => `${history}${currentNumber}`);
     }
     setCurrentNumber("0");
     setOperation(operation);
+    setHistory((history) => `${history}${operation}`);
   };
 
   return (
     <Container>
       <Content>
+        <Input value={history} />
         <Input value={currentNumber} />
         <Row>
           <Button label="0" onClick={() => handleAddNumber("0")} />
