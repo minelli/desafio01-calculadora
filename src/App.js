@@ -8,15 +8,21 @@ const App = () => {
   const [currentNumber, setCurrentNumber] = useState("0");
   const [firstNumber, setFirstNumber] = useState("0");
   const [operation, setOperation] = useState("");
+  const [hasResult, setHasResult] = useState(false);
 
-  const handleAddNumber = (number) =>
-    setCurrentNumber((prev) => `${prev === "0" ? "" : prev}${number}`);
+  const handleAddNumber = (number) => {
+    if (hasResult && operation === "") {
+      handleOnClear();
+      setCurrentNumber(number);
+    } else setCurrentNumber((prev) => `${prev === "0" ? "" : prev}${number}`);
+  };
 
   const handleOnClear = () => {
     setCurrentNumber("0");
     setFirstNumber("0");
     setOperation("");
     setHistory("");
+    setHasResult(false);
   };
 
   const handleResult = () => {
@@ -42,6 +48,8 @@ const App = () => {
     setHistory((history) => `${history}${currentNumber}=${result}`);
     setCurrentNumber(String(result));
     setFirstNumber(String(result));
+    setOperation("");
+    setHasResult(true);
   };
 
   const handleOperation = (operation) => {
@@ -49,10 +57,16 @@ const App = () => {
       setFirstNumber(currentNumber);
       setHistory((history) => `${history}${currentNumber}`);
     }
+    // TO DO : handle if multiple operations without press '=' (1 + 1 + 1 + 1 = 4)
     setCurrentNumber("0");
     setOperation(operation);
-    setHistory((history) => `${history}${operation}`);
+    setHistory(
+      (history) => `${PurgePreviousOperationOnHistory(history)}${operation}`
+    );
   };
+
+  const PurgePreviousOperationOnHistory = (history) =>
+    history.includes("=") ? history.split("=")[1] : history;
 
   return (
     <Container>
